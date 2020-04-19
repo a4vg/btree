@@ -66,7 +66,7 @@ public:
 
   BNode(void):order(S){
     keys=container_t(order,0);
-    ptrs=pcontainer_t(order,NULL);
+    ptrs=pcontainer_t(order+1,NULL);
   }
 
   ~BNode(void){}
