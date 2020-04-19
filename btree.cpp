@@ -58,15 +58,15 @@ class BNode {
 public:
   typedef typename T::value_t value_t;
   typedef typename T::container_t container_t;
-  typedef typename T::pcontainer_t pcontainer_t;
+  typedef std::vector<BNode*> container_pnode;
 
   container_t keys;
-  pcontainer_t ptrs;
+  container_pnode ptrs;
   std::size_t order;
 
   BNode(void):order(S){
     keys=container_t(order,0);
-    ptrs=pcontainer_t(order+1,NULL);
+    ptrs=container_pnode(order+1,NULL);
   }
 
   ~BNode(void){}
