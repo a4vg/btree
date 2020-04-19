@@ -84,34 +84,34 @@ public:
   functor_t search;
 
 private:
-  value_t createChildren(BNode<T,S>* poverf_node, BNode<T,S>& child1_node, BNode<T,S>& child2){
+  value_t createChildren(BNode<T,S>& poverf_node, BNode<T,S>& child1_node, BNode<T,S>& child2){
     /*
       Creates two children from overflowed node and returns the extra key (middle one)
     */
 
-    size_t mid_i = poverf_node->keys.size()/2;
+    size_t mid_i = poverf_node.keys.size()/2;
     size_t overfnode_i = 0, i;
     // Copy overflowed node contents to first child
     for (i=0; overfnode_i<mid_i; ++i, ++overfnode_i){
-      child1_node.keys[i] = poverf_node->keys[overfnode_i];
-      child1_node.ptrs[i] = poverf_node->ptrs[overfnode_i];
+      child1_node.keys[i] = poverf_node.keys[overfnode_i];
+      child1_node.ptrs[i] = poverf_node.ptrs[overfnode_i];
     }
 
     ++overfnode_i; // skip middle
 
     // Copy overflowed node contents to second child
-    for (i=0; overfnode_i<poverf_node->keys.size(); ++i, ++overfnode_i){
-      child2.keys[i] = poverf_node->keys[overfnode_i];
-      child2.ptrs[i] = poverf_node->ptrs[overfnode_i];
+    for (i=0; overfnode_i<poverf_node.keys.size(); ++i, ++overfnode_i){
+      child2.keys[i] = poverf_node.keys[overfnode_i];
+      child2.ptrs[i] = poverf_node.ptrs[overfnode_i];
     }
-    child2.ptrs[i+1] = poverf_node->ptrs[overfnode_i+1]; // last ptr
+    child2.ptrs[i+1] = poverf_node.ptrs[overfnode_i+1]; // last ptr
 
-    return poverf_node->keys[mid_i];
+    return poverf_node.keys[mid_i];
   }
 
   void split(BNode<T,S>* pparent_node, size_t target_i){
     BNode<T,S> child1_node, child2_node;
-    value_t mid_key = createChildren(*(pparent_node->ptrs[target_i]), split1_node, split2_node);
+    value_t mid_key = createChildren(*(pparent_node->ptrs[target_i]), child1_node, child2_node);
 
     // Assign children nodes to parent
     pparent_node->ptrs[target_i] = &child1_node;
@@ -120,11 +120,11 @@ private:
     insert(pparent_node, mid_key);
   }
 
-  void insertInLeaf(BNode<T,S> &leaf_node, const value_t& val){
+  void insertInLeaf(BNode<T,S> &leaf_node, size_t target_i, const value_t& val){
     // Displace elements
     value_t last_key = leaf_node.keys.back();
     BNode<T,S>* plast_ptr = leaf_node.ptrs.back();
-    for (size_t i=leaf_node.eys.size()-1; i>=target_i; --i){
+    for (size_t i=leaf_node.keys.size()-1; i>=target_i; --i){
       leaf_node.keys[i] = leaf_node.keys[i-1];
       leaf_node.ptrs[i+1] = leaf_node.ptrs[i];
     }
@@ -146,15 +146,15 @@ private:
     */
 
     size_t target_i=0;
-    for (; target_i<pcur_node->keys || pcur_node->keys[target_i]<val; ++target_i);
-    if (pcur_node->ptrs[i])
+    for (; target_i<pcur_node->keys.size() || pcur_node->keys[target_i]<val; ++target_i);
+    if (pcur_node->ptrs[target_i])
       if (insert(pcur_node->ptrs[target_i], val)){ // overflow
         split(pcur_node, target_i);
         return false;
       }
 
     // Current node is a leaf
-    insertInLeaf(*pcur_node, val);
+    insertInLeaf(*pcur_node, target_i, val);
 
     // Check overflow
     return pcur_node->keys.size()>pcur_node->order;
@@ -170,7 +170,7 @@ public:
     if (empty()) root = new BNode<T,S>;
     if (insert(root, val)){  // root overflow
       BNode<T,S> new_root, child1_node, child2_node;
-      value_t mid_key = createChildren(root, child1_node, child2_node);
+      value_t mid_key = createChildren(*root, child1_node, child2_node);
       new_root.keys[0]= mid_key;
       new_root.ptrs[0] = &child1_node;
       new_root.ptrs[1] = &child2_node;
