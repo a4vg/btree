@@ -98,6 +98,10 @@ public:
     return false;
   }
 
+  bool empty(){
+    return !root;
+  }
+
   template <typename _T, int _S>
   friend std::ostream& operator<<(std::ostream& out, BTree<_T,_S> tree){
     tree.print();// (out)
