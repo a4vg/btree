@@ -123,12 +123,6 @@ private:
   }
 
   void insertInNode(BNode<T,S> &leaf_node, size_t target_i, const value_t& val){
-    if (target_i==leaf_node.keys.size()){
-      leaf_node.keys.push_back(val);
-      leaf_node.ptrs.push_back(nullptr);
-      return;
-    }
-
     // Displace elements
     value_t last_key = leaf_node.keys.back();
     BNode<T,S>* plast_ptr = leaf_node.ptrs.back();
@@ -137,15 +131,15 @@ private:
       leaf_node.ptrs[i+1] = leaf_node.ptrs[i];
     }
 
-    // Insert
-    leaf_node.keys[target_i] = val;
-    leaf_node.ptrs[target_i+1] = nullptr;
-
     // Append elements if node was full (creates overflow)
     if (last_key){
       leaf_node.keys.push_back(last_key);
       leaf_node.ptrs.push_back(plast_ptr);
     }
+
+    // Insert
+    leaf_node.keys[target_i] = val;
+    leaf_node.ptrs[target_i+1] = nullptr;
   }
 
   bool insert(BNode<T,S>* pcur_node, const value_t& val){
