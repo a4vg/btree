@@ -6,13 +6,12 @@ class SS_Traits{
 public:
   typedef T  value_t;
   typedef std::vector<value_t> container_t;
-  typedef std::vector<value_t*> pcontainer_t;
   typedef typename container_t::iterator iterator_t;
   
   class simple_search{
   public:
-    bool operator() (container_t a, value_t v){
-      return false;
+    int operator() (container_t a, value_t v){
+      return 0;
     }
   };
 
@@ -32,13 +31,12 @@ class BS_Traits{
 public:
   typedef T  value_t;
   typedef std::vector<value_t> container_t;
-  typedef std::vector<value_t*> pcontainer_t;
   typedef typename container_t::iterator iterator_t;
   
   class binary_search{
   public:
-    bool operator() (container_t a, value_t v){
-      return false;
+    int operator() (container_t a, value_t v){
+      return 0;
     }
   };
 
@@ -58,15 +56,15 @@ class BNode {
 public:
   typedef typename T::value_t value_t;
   typedef typename T::container_t container_t;
-  typedef std::vector<BNode*> container_pnode;
+  typedef std::vector< BNode<T,S>* > pcontainer_t;
 
   container_t keys;
-  container_pnode ptrs;
+  pcontainer_t ptrs;
   std::size_t order;
 
   BNode(void):order(S){
     keys=container_t(order,0);
-    ptrs=container_pnode(order+1,NULL);
+    ptrs=pcontainer_t(order+1,NULL);
   }
 
   ~BNode(void){}
@@ -76,6 +74,7 @@ template <typename T, int S>
 class BTree {
 public: 
   typedef typename T::value_t value_t;
+  typedef typename T::container_t container_t;
   typedef typename T::functor_t functor_t;
   typedef typename T::print_t print_t;
 
