@@ -63,8 +63,8 @@ public:
   std::size_t order;
 
   BNode(void):order(S){
-    keys=container_t(order,0);
-    ptrs=pcontainer_t(order+1,NULL);
+    keys=container_t(order-1,0);
+    ptrs=pcontainer_t(order,NULL);
   }
 
   ~BNode(void){}
