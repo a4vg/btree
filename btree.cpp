@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector> 
+#include <limits>
 
 template <typename T>
 class SS_Traits{
@@ -58,12 +59,13 @@ public:
   typedef typename T::container_t container_t;
   typedef std::vector< BNode<T,S>* > pcontainer_t;
 
+  value_t INF = std::numeric_limits<value_t>::max();
   container_t keys;
   pcontainer_t ptrs;
   std::size_t order;
 
   BNode(void):order(S){
-    keys=container_t(order-1,0);
+    keys=container_t(order-1,INF);
     ptrs=pcontainer_t(order,NULL);
   }
 
@@ -78,6 +80,7 @@ public:
   typedef typename T::functor_t functor_t;
   typedef typename T::print_t print_t;
 
+  value_t INF = std::numeric_limits<value_t>::max();
   BNode<T,S>* root;
   print_t print;
   functor_t search;
@@ -132,7 +135,7 @@ private:
     }
 
     // Append elements if node was full (creates overflow)
-    if (last_key){
+    if (last_key!=INF){
       leaf_node.keys.push_back(last_key);
       leaf_node.ptrs.push_back(plast_ptr);
     }
@@ -148,7 +151,7 @@ private:
     */
 
     size_t target_i=0;
-    for (; target_i<pcur_node->keys.size() && pcur_node->keys[target_i] && pcur_node->keys[target_i]<val; ++target_i);
+    for (; target_i<pcur_node->keys.size() && pcur_node->keys[target_i]<val; ++target_i);
     if (pcur_node->ptrs[target_i]){
       if (insert(pcur_node->ptrs[target_i], val)) // overflow
         split(pcur_node, target_i);
@@ -180,7 +183,6 @@ public:
   void insert(const value_t& val = 0){
     if (empty()) root = new BNode<T,S>;
     if (insert(root, val)){  // root overflow
-      std::cout << "Root overflow\n";
       BNode<T,S>* new_root = new BNode<T,S>;
       BNode<T,S>* child1_node = new BNode<T,S>;
       BNode<T,S>* child2_node = new BNode<T,S>;
