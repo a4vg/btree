@@ -12,7 +12,10 @@ public:
   class simple_search{
   public:
     int operator() (container_t a, value_t v){
-      return 0;
+      for (int i=0; i<a.size(); ++i)
+        if (a[i]==v)
+          return i;
+      return -1;
     }
   };
 
@@ -37,7 +40,14 @@ public:
   class binary_search{
   public:
     int operator() (container_t a, value_t v){
-      return 0;
+      int limits[2] = {0, (int)a.size()-1};
+      while (limits[0]<=limits[1]){
+        int mid_i = (limits[0] + limits[1])/2;
+        if (a[mid_i]==v) return mid_i;
+        if (a[mid_i]>v) limits[1] = mid_i-1; // first half
+        else limits[0] = mid_i+1; // second half
+      }
+      return -1;
     }
   };
 
@@ -174,6 +184,15 @@ private:
       if (ptr) print(ptr, space+2);
   }
 
+  bool find(BNode<T,S>* pcur_node, const value_t& val){
+    size_t target_i=0;
+    for (; target_i<pcur_node->keys.size() && pcur_node->keys[target_i]<val; ++target_i);
+    if (pcur_node->ptrs[target_i])
+      return find(pcur_node->ptrs[target_i], val);
+    else
+      return search(pcur_node->keys, val)!=-1;
+  }
+
 public:
   BTree(void):root(NULL){
   }
@@ -194,10 +213,9 @@ public:
     }
   }
 
-  bool find(const value_t = 0) const{
-    // TODO :: SEARCH
-    // search(x); inside each page
-    return false;
+  bool find(const value_t& val= 0){
+    if (empty()) return false;
+    return find(root, val);
   }
 
   bool empty(){
