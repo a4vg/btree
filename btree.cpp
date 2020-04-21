@@ -80,6 +80,18 @@ public:
   }
 
   ~BNode(void){}
+
+  template <typename _T, int _S>
+  friend std::ostream& operator<<(std::ostream& out, BNode<_T,_S> node){
+
+    std::cout << "[ ";
+    for (const value_t& key: node.keys)
+      if (key!=node.INF) std::cout << key << " ";
+      else std::cout << "- ";
+
+    std::cout << "]";
+    return out;
+  }
 };
 
 template <typename T, int S>
@@ -92,7 +104,7 @@ public:
 
   value_t INF = std::numeric_limits<value_t>::max();
   BNode<T,S>* root;
-  print_t print;
+  // print_t print;
   functor_t search;
 
 private:
@@ -175,13 +187,26 @@ private:
     return pcur_node->keys.size()==pcur_node->order;
   }
 
-  void print(BNode<T,S>* pcur_node, int space=0){
+  void postorderPrint(std::ostream& out, BNode<T,S>* pcur_node, int space=0){
     if (!pcur_node) return;
-    std::cout << "\n";
-    for (int i=0; i<space; ++i) std::cout << " ";
-    std::cout << *pcur_node;
+    out << "\n";
+
     for (auto& ptr: pcur_node->ptrs)
-      if (ptr) print(ptr, space+2);
+      if (ptr) postorderPrint(out, ptr, space+2);
+
+    for (int i=0; i<space; ++i) out << " ";
+    out << *pcur_node;
+    }
+
+  void preorderPrint(std::ostream& out, BNode<T,S>* pcur_node, int space=0){
+    if (!pcur_node) return;
+    out << "\n";
+    
+    for (int i=0; i<space; ++i) out << " ";
+    out << *pcur_node;
+    
+    for (auto& ptr: pcur_node->ptrs)
+      if (ptr) preorderPrint(out, ptr, space+2);
   }
 
   bool find(BNode<T,S>* pcur_node, const value_t& val){
@@ -224,8 +249,7 @@ public:
 
   template <typename _T, int _S>
   friend std::ostream& operator<<(std::ostream& out, BTree<_T,_S> tree){
-    tree.print();// (out)
-    // IN PRE POST LEVEL ORDER
+    tree.preorderPrint(out, tree.root);
     return out;
   }
 
