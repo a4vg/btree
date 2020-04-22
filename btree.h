@@ -48,7 +48,7 @@ public:
   const int order = S;
   value_t INF = std::numeric_limits<value_t>::max();
   BNode<T,S>* root;
-  // print_t print;
+  print_t printPost;
   functor_t search;
 
 private:
@@ -134,11 +134,11 @@ private:
 
   void postorderPrint(std::ostream& out, BNode<T,S>* pcur_node, int space=0){
     if (!pcur_node) return;
-    out << "\n";
 
     for (auto& ptr: pcur_node->ptrs)
       if (ptr) postorderPrint(out, ptr, space+2);
 
+    out << "\n";
     for (int i=0; i<space; ++i) out << " ";
     out << *pcur_node;
     }
@@ -197,7 +197,15 @@ public:
 
   template <typename _T, int _S>
   friend std::ostream& operator<<(std::ostream& out, BTree<_T,_S> tree){
-    tree.preorderPrint(out, tree.root);
+    bool post = tree.printPost();
+    if (post){
+      out << "\nPost order print";
+      tree.postorderPrint(out, tree.root);
+    }
+    else{
+      out << "\nPre order print";
+      tree.preorderPrint(out, tree.root);
+    }
     return out;
   }
 

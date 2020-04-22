@@ -8,8 +8,8 @@ int main() {
   typedef SS_Traits<float> strait_t;
 
   std::cout << "******** Binary Search BTree ********\n";
-  BTree<btrait_t,10> btree;
-  std::vector<int> i_values;;
+  BTree<btrait_t,4> btree;
+  std::vector<int> i_values;
   std::cout << "Order: " << btree.order;
 
   for (int i=0; i<20; ++i){

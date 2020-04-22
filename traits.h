@@ -19,8 +19,8 @@ public:
 
   class post_order_print{
   public:
-    void operator() (void){
-      std::cout << "post order" << std::endl;
+    bool operator() (){
+      return true;
     }
   };
 
@@ -52,8 +52,8 @@ public:
 
   class pre_order_print{
   public:
-    void operator() (void){
-      std::cout << "pre order" << std::endl;
+    bool operator() (){
+      return false;
     }
   };
 
