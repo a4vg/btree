@@ -3,7 +3,7 @@
 #include <limits>
 #include <time.h>
 #include <stdio.h>
-#include "traits.cpp"
+#include "traits.h"
 
 template <typename T, int S> 
 class BNode {
@@ -202,15 +202,3 @@ public:
   }
 
 };
-
-int main() {
-  typedef BS_Traits<int> btrait_t;
-  BTree<btrait_t,4> tree;
-  tree.find(10);
-  std::cout<<tree<< std::endl;
-
-
-  typedef SS_Traits<float> strait_t;
-  BTree<strait_t,10> stree; 
-  std::cout<<stree<< std::endl;
-}
