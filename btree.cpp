@@ -45,6 +45,7 @@ public:
   typedef typename T::functor_t functor_t;
   typedef typename T::print_t print_t;
 
+  const int order = S;
   value_t INF = std::numeric_limits<value_t>::max();
   BNode<T,S>* root;
   // print_t print;
