@@ -116,8 +116,9 @@ private:
       Returns true if node is overflowing.
     */
 
-    size_t target_i=0;
-    for (; target_i<pcur_node->keys.size() && pcur_node->keys[target_i]<val; ++target_i);
+    size_t target_i = search(pcur_node->keys, val);
+    target_i += 1*(target_i<pcur_node->keys.size() &&  pcur_node->keys[target_i]<val);
+
     if (pcur_node->ptrs[target_i]){
       if (insert(pcur_node->ptrs[target_i], val)) // overflow
         split(pcur_node, target_i);
@@ -154,12 +155,15 @@ private:
   }
 
   bool find(BNode<T,S>* pcur_node, const value_t& val){
-    size_t target_i=0;
-    for (; target_i<pcur_node->keys.size() && pcur_node->keys[target_i]<val; ++target_i);
-    if (pcur_node->ptrs[target_i])
-      return find(pcur_node->ptrs[target_i], val);
+    size_t target_i = search(pcur_node->keys, val);
+    target_i += 1*(target_i<pcur_node->keys.size() &&  pcur_node->keys[target_i]<val);
+
+    if (pcur_node->keys[target_i]==val)
+      return true; // found
+    else if (pcur_node->ptrs[target_i])
+      return find(pcur_node->ptrs[target_i], val); // go down
     else
-      return search(pcur_node->keys, val)!=-1;
+      return false;
   }
 
 public:
